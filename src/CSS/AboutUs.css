@@ -1,0 +1,77 @@
+/* AboutUs.css */
+
+.hospital-image-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.hospital-image {
+  width: 90%;
+  max-width: 960px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  object-fit: cover;
+}
+
+/* Main container */
+.landingP {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(to bottom, #0f0f0f, #1a1a1a);
+  color: #f3f4f6;
+  padding: 4rem 2rem;
+  min-height: 100vh;
+}
+
+/* About content box */
+.about-content {
+  background-color: #1f1f1f;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  max-width: 850px;
+  width: 100%;
+  margin-bottom: 3rem;
+  text-align: left;
+}
+
+.about-content h2 {
+  font-size: 2rem;
+  color: #00bcd4;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #00bcd4;
+  padding-bottom: 0.5rem;
+}
+
+.about-content h3 {
+  font-size: 1.4rem;
+  color: #81ecec;
+  margin-top: 2rem;
+}
+
+.about-content p {
+  margin-top: 0.75rem;
+  color: #dcdde1;
+  line-height: 1.7;
+}
+
+/* Button styles */
+.about-content button {
+  margin-top: 2rem;
+  background-color: #00bcd4;
+  color: #121212;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.about-content button:hover {
+  background-color: #00a0b2;
+  transform: translateY(-2px);
+}

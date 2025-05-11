@@ -1,0 +1,156 @@
+/* Register Page - Modern Glassmorphism Design */
+.register-container {
+  --primary-accent: #14b8a6; /* Teal */
+  --secondary-accent: #0d9488;
+  --text-primary: #f8fafc;
+  --text-secondary: #e2e8f0;
+  --dark-bg: #020617;
+  --card-bg: rgba(15, 23, 42, 0.8);
+  --transition-speed: 0.3s;
+}
+
+.register-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #000000 0%, #1e293b 100%);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.register-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.register-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 3rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: transform 0.5s ease;
+}
+
+.register-card:hover {
+  transform: translateY(-5px);
+}
+
+.register-title {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  position: relative;
+}
+
+.register-title::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent));
+  border-radius: 2px;
+}
+
+.register-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.register-button {
+  background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3);
+}
+
+.register-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(20, 184, 166, 0.4);
+  background: linear-gradient(135deg, var(--secondary-accent), var(--primary-accent));
+}
+
+/* Floating decorative elements */
+.floating-element {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.15;
+  z-index: 0;
+}
+
+.element-1 {
+  width: 200px;
+  height: 200px;
+  background: var(--primary-accent);
+  top: 20%;
+  left: 10%;
+  animation: float 12s infinite ease-in-out;
+}
+
+.element-2 {
+  width: 150px;
+  height: 150px;
+  background: var(--secondary-accent);
+  bottom: 15%;
+  right: 10%;
+  animation: float 10s infinite ease-in-out reverse;
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(20px, 20px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .register-card {
+    padding: 2rem;
+    max-width: 320px;
+  }
+  
+  .register-title {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-card {
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+  
+  .register-title {
+    font-size: 1.5rem;
+  }
+  
+  .register-buttons {
+    gap: 1rem;
+  }
+}
