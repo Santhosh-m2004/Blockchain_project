@@ -1,3 +1,5 @@
+//DoctorRegistration.sol
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
@@ -21,7 +23,10 @@ contract DoctorRegistration {
         string patient_number;
         string patient_name;
     }
-
+    
+    address public admin;
+    string[] private doctorList;
+    
     mapping(string => address) private doctorAddresses;
     mapping(address => string) private addressToDoctorNumber;
     mapping(string => Doctor) private doctors;
@@ -34,6 +39,11 @@ contract DoctorRegistration {
     event PermissionGranted(string doctorNumber, string patientNumber);
     event PermissionRevoked(string doctorNumber, string patientNumber);
 
+    modifier onlyAdmin() {
+        require(msg.sender == admin, "Only admin can call this");
+        _;
+    }
+
     modifier onlyDoctor(string memory _doctorNumber) {
         require(doctorAddresses[_doctorNumber] == msg.sender, "Unauthorized: Not the doctor");
         _;
@@ -44,8 +54,16 @@ contract DoctorRegistration {
         _;
     }
 
-    function setPatientContract(address _addr) external {
+    constructor() {
+        admin = msg.sender;
+    }
+
+    function setPatientContract(address _addr) external onlyAdmin {
         patientContract = _addr;
+    }
+
+    function getAllDoctors() external view onlyAdmin returns (string[] memory) {
+        return doctorList;
     }
 
     function registerDoctor(
@@ -78,7 +96,8 @@ contract DoctorRegistration {
             workExperience: _workExperience,
             password: _password
         });
-
+        
+        doctorList.push(_hhNumber);
         doctorAddresses[_hhNumber] = msg.sender;
         addressToDoctorNumber[msg.sender] = _hhNumber;
         emit DoctorRegistered(_hhNumber, _doctorName, msg.sender);

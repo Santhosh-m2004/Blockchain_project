@@ -1,3 +1,4 @@
+//2_deploy_migration.js
 const DoctorRegistry = artifacts.require("DoctorRegistration");
 const PatientRegistry = artifacts.require("PatientRegistration");
 
