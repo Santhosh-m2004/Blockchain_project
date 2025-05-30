@@ -85,8 +85,8 @@ const DoctorViewPatient = () => {
       </div>
       <div>
       <center>
-      <button
-            onClick={viewPatientRecords}
+          <button
+            onClick={ViewPatientRecords}
             className="my-2 px-4 sm:px-8 py-4 sm:py-5 w-full sm:w-1/4 rounded-lg bg-teal-500 hover:bg-gray-600 transition-colors duration-300"
           >
             View Record

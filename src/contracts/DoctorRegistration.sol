@@ -102,6 +102,9 @@ contract DoctorRegistration {
         addressToDoctorNumber[msg.sender] = _hhNumber;
         emit DoctorRegistered(_hhNumber, _doctorName, msg.sender);
     }
+    function getPublicDoctorList() external view returns (string[] memory) {
+    return doctorList;
+}
 
     function isRegisteredDoctor(string memory _hhNumber) external view returns (bool) {
         return doctorAddresses[_hhNumber] != address(0);
@@ -201,4 +204,6 @@ contract DoctorRegistration {
     function getDoctorNumberByAddress(address _addr) external view returns (string memory) {
         return addressToDoctorNumber[_addr];
     }
+    
+
 }

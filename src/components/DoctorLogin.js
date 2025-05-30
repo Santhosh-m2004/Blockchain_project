@@ -1,3 +1,4 @@
+//DoctorLogin.js
 import React, { useState } from "react";
 import Web3 from "web3";
 import DoctorRegistration from "../build/contracts/DoctorRegistration.json";

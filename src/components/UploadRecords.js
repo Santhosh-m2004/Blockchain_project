@@ -19,6 +19,7 @@ const UploadRecords = () => {
   const [contract, setContract] = useState(null);
   const [account, setAccount] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [fileName, setFileName] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,21 +34,16 @@ const UploadRecords = () => {
           const web3Instance = new Web3(window.ethereum);
           
           const networkId = await web3Instance.eth.net.getId();
-          console.log("Connected to network ID:", networkId);
-          
           const deployedNetwork = PatientRegistration.networks[networkId];
           
           if (!deployedNetwork) {
             throw new Error(`Contract not deployed on network ${networkId}`);
           }
-          console.log("Contract address:", deployedNetwork.address);
 
           const contractInstance = new web3Instance.eth.Contract(
             PatientRegistration.abi,
             deployedNetwork.address
           );
-
-          console.log("Available contract methods:", Object.keys(contractInstance.methods));
           
           if (!contractInstance.methods.uploadPatientRecord) {
             throw new Error("uploadPatientRecord method missing in contract");
@@ -84,70 +80,31 @@ const UploadRecords = () => {
   }, [hhNumber]);
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setIsUploading(true);
+    e.preventDefault();
+    setIsUploading(true);
 
-  try {
-    // Upload with pinning enabled
-    const added = await ipfsClient.add(file, {
-      pin: true, 
-      wrapWithDirectory: true, 
-      progress: (bytes) => console.log(`Uploading: ${bytes} bytes`)
-    });
-    
-    const fileHash = added.cid.toString();
-    console.log("IPFS Hash:", fileHash);
-
-    // Verify the file is pinned locally
-    await verifyLocalPin(fileHash);
-
-    // Store hash on blockchain
-    const accounts = await web3.eth.getAccounts();
-    await contract.methods
-      .uploadPatientRecord(hhNumber, fileHash)
-      .send({ from: accounts[0] });
-
-    alert("File successfully uploaded to IPFS and pinned locally!");
-    console.log("Check your IPFS WebUI at http://localhost:5001/webui");
-  } catch (error) {
-    console.error("Upload error:", error);
-    alert(`Upload failed: ${error.message}`);
-  } finally {
-    setIsUploading(false);
-  }
-};
-const verifyLocalPin = async (cid) => {
-  try {
-    // Check if file is pinned
-    const pins = await fetch(`http://127.0.0.1:5001/api/v0/pin/ls?arg=${cid}&type=recursive`)
-      .then(res => res.json());
-    
-    console.log("Pinning status:", pins);
-    
-    // If not pinned, explicitly pin it
-    if (!pins.Keys || !pins.Keys[cid]) {
-      await fetch(`http://127.0.0.1:5001/api/v0/pin/add?arg=${cid}&recursive=true`, {
-        method: 'POST'
+    try {
+      const added = await ipfsClient.add(file, {
+        pin: true, 
+        progress: (bytes) => console.log(`Uploading: ${bytes} bytes`)
       });
-      console.log("Explicitly pinned file");
-    }
-  } catch (error) {
-    console.error("Pinning verification failed:", error);
-  }
-};
+      
+      const fileHash = added.cid.toString();
+      const accounts = await web3.eth.getAccounts();
+      await contract.methods
+        .uploadPatientRecord(hhNumber, fileHash)
+        .send({ from: accounts[0] });
 
-const pinToLocalNode = async (cid) => {
-  try {
-    const response = await fetch(`http://127.0.0.1:5001/api/v0/pin/add?arg=${cid}`, {
-      method: 'POST'
-    });
-    const data = await response.json();
-    console.log("Pinning response:", data);
-    return data;
-  } catch (error) {
-    console.error("Local pinning error:", error);
-  }
-};
+      alert("File successfully uploaded!");
+      setFile(null);
+      setFileName("");
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert(`Upload failed: ${error.message}`);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -172,64 +129,126 @@ const pinToLocalNode = async (cid) => {
     }
 
     setFile(selectedFile);
+    setFileName(selectedFile.name);
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
       <NavBarLogout />
-      <div className="flex items-center justify-center min-h-screen bg-black text-white font-mono">
-        <form
-          onSubmit={handleSubmit}
-          className="bg-gray-900 p-10 rounded-xl shadow-md w-11/12 sm:w-3/4 lg:w-1/2"
-        >
-          <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-center">
+      
+      <div className="max-w-md mx-auto px-4 py-8">
+        <div className="text-center mb-10">
+          <div className="inline-block p-4 bg-blue-100 rounded-full mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">
             Upload Medical Record
-          </h2>
-          
-          <div className="mb-6">
-            <label className="block mb-2 text-sm font-medium">
-              Select medical record file (PDF, images, max 10MB)
-            </label>
-            <input
-              type="file"
-              onChange={handleFileChange}
-              className="w-full p-2 mb-2 bg-gray-700 rounded-md"
-              accept=".pdf,.jpg,.jpeg,.png,.dcm,.txt"
-              required
-            />
-            <p className="text-xs text-gray-400">
-              Supported formats: PDF, JPG, PNG, DICOM, TXT
-            </p>
-          </div>
-          
-          <div className="flex justify-center gap-4">
-            <button
-              type="submit"
-              className={`bg-teal-500 text-white px-6 py-2 rounded-md hover:bg-teal-600 ${
-                isUploading ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-              disabled={isUploading || !file}
-            >
-              {isUploading ? (
-                <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </h1>
+          <p className="text-gray-600">
+            Securely upload medical documents for patient #{hhNumber}
+          </p>
+        </div>
+        
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <form onSubmit={handleSubmit}>
+            {/* File Upload Area */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Select medical record file
+              </label>
+              
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center transition-colors hover:border-blue-400 cursor-pointer">
+                <input
+                  type="file"
+                  id="file-upload"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  accept=".pdf,.jpg,.jpeg,.png,.dcm,.txt"
+                  required
+                />
+                <label htmlFor="file-upload" className="cursor-pointer">
+                  <div className="flex flex-col items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p className="text-sm text-gray-600 mb-1">
+                      <span className="font-medium text-blue-600">Click to upload</span>
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      PDF, JPG, PNG, DICOM, TXT (max 10MB)
+                    </p>
+                  </div>
+                </label>
+              </div>
+              
+              {fileName && (
+                <div className="mt-3 bg-blue-50 rounded-lg p-3 flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  Uploading...
-                </span>
-              ) : 'Submit'}
-            </button>
+                  <span className="text-sm text-blue-700 truncate">{fileName}</span>
+                </div>
+              )}
+            </div>
             
-            <button
-              type="button"
-              onClick={() => navigate(`/patient/${hhNumber}`)}
-              className="bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={() => navigate(`/patient/${hhNumber}`)}
+                className="px-4 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition-colors flex items-center justify-center"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                </svg>
+                Cancel
+              </button>
+              
+              <button
+                type="submit"
+                disabled={isUploading || !file}
+                className={`px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors ${
+                  isUploading || !file ? 'opacity-50 cursor-not-allowed' : ''
+                } flex items-center justify-center flex-1`}
+              >
+                {isUploading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                    Upload Record
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+        
+        {/* File Requirements */}
+        <div className="mt-6 bg-gray-100 rounded-lg p-4 text-sm text-gray-600">
+          <h3 className="font-medium text-gray-800 mb-2">File Requirements:</h3>
+          <ul className="space-y-1">
+            <li className="flex items-start">
+              <span className="text-blue-500 mr-2">•</span>
+              Maximum file size: 10MB
+            </li>
+            <li className="flex items-start">
+              <span className="text-blue-500 mr-2">•</span>
+              Supported formats: PDF, JPG, PNG, TXT
+            </li>
+            
+          </ul>
+        </div>
       </div>
     </div>
   );

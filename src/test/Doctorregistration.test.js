@@ -143,5 +143,4 @@ contract("DoctorRegistration", (accounts) => {
     );
   });
 
-  // Add more tests as needed for each function
 });

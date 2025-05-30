@@ -53,21 +53,58 @@ const PatientDashBoard = () => {
   return (
     <div>
       <NavBarLogout />
-      <div className="bg-gradient-to-b from-black to-gray-800 p-4 sm:p-10 font-mono text-white h-screen flex flex-col justify-center items-center">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-6">Patient Dashboard</h2>
-        {patientDetails ? (
-          <p className="text-xl sm:text-2xl mb-24">
-            Welcome{" "}
-            <span className="font-bold text-yellow-500">{patientDetails.name}!</span>
-          </p>
-        ) : (
-          <p className="text-red-400 mb-24">{error || "Loading..."}</p>
-        )}
-        <div className="flex flex-wrap justify-center gap-5 w-full px-4 sm:px-0">
-          <button onClick={viewProfile} className="my-2 px-4 sm:px-8 py-4 sm:py-5 w-full sm:w-1/4 rounded-lg bg-teal-500 hover:bg-gray-600 transition-colors duration-300">View Profile</button>
-          <button onClick={viewRecord} className="my-2 px-4 sm:px-8 py-4 sm:py-5 w-full sm:w-1/4 rounded-lg bg-teal-500 hover:bg-gray-600 transition-colors duration-300">View Record</button>
-          <button onClick={uploadRecords} className="my-2 px-4 sm:px-8 py-4 sm:py-5 w-full sm:w-1/4 rounded-lg bg-teal-500 hover:bg-gray-600 transition-colors duration-300">Upload Past Records</button>
-          <button onClick={grantPermission} className="my-2 px-4 sm:px-8 py-4 sm:py-5 w-full sm:w-1/4 rounded-lg bg-teal-500 hover:bg-gray-600 transition-colors duration-300">Grant Permission</button>
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-lg shadow-md p-8">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+              Patient Dashboard
+            </h2>
+            
+            {patientDetails ? (
+              <div className="text-center mb-8">
+                <p className="text-xl text-gray-600">
+                  Welcome back,{" "}
+                  <span className="font-semibold text-indigo-600">
+                    {patientDetails.name}
+                  </span>
+                </p>
+              </div>
+            ) : (
+              <p className="text-center text-red-600 mb-8">
+                {error || "Loading patient details..."}
+              </p>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <button 
+                onClick={viewProfile}
+                className="w-full p-4 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-lg transition-colors duration-200 flex items-center justify-center"
+              >
+                <span className="text-lg font-medium">View Profile</span>
+              </button>
+              
+              <button 
+                onClick={viewRecord}
+                className="w-full p-4 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-lg transition-colors duration-200 flex items-center justify-center"
+              >
+                <span className="text-lg font-medium">View Records</span>
+              </button>
+              
+              <button 
+                onClick={uploadRecords}
+                className="w-full p-4 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-lg transition-colors duration-200 flex items-center justify-center"
+              >
+                <span className="text-lg font-medium">Upload Records</span>
+              </button>
+              
+              <button 
+                onClick={grantPermission}
+                className="w-full p-4 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-lg transition-colors duration-200 flex items-center justify-center"
+              >
+                <span className="text-lg font-medium">Grant Permission</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

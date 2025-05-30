@@ -149,7 +149,7 @@ const LoginPage = () => {
                 <>
                   <div>
                     <label htmlFor="hhNumber" className="text-white">
-                      HH Number
+                      ID
                     </label>
                     <input
                       id="hhNumber"
@@ -157,7 +157,7 @@ const LoginPage = () => {
                       value={hhNumber}
                       onChange={(e) => setHhNumber(e.target.value)}
                       className="w-full p-2 rounded-lg bg-gray-700 text-white mt-1"
-                      placeholder="Enter HH Number"
+                      placeholder="Enter Id"
                     />
                   </div>
                   <div>

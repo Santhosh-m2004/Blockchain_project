@@ -1,17 +1,30 @@
-//2_deploy_contracts.js
-const DoctorRegistry = artifacts.require("DoctorRegistration");
-const PatientRegistry = artifacts.require("PatientRegistration");
+// 2_deploy_contracts.js
+const DoctorRegistration = artifacts.require("DoctorRegistration");
+const PatientRegistration = artifacts.require("PatientRegistration");
+const ConsultationRecords = artifacts.require("ConsultationRecords");
 
-module.exports = async function (deployer, network, accounts) {
-  await deployer.deploy(DoctorRegistry);
-  const doctor = await DoctorRegistry.deployed();
+module.exports = async (deployer, network, accounts) => {
+  // Deploy core contracts
+  await deployer.deploy(DoctorRegistration);
+  await deployer.deploy(PatientRegistration);
+  
+  const doctor = await DoctorRegistration.deployed();
+  const patient = await PatientRegistration.deployed();
 
-  await deployer.deploy(PatientRegistry);
-  const patient = await PatientRegistry.deployed();
+  // Deploy ConsultationRecords with dependencies
+  await deployer.deploy(ConsultationRecords, patient.address, doctor.address);
+  const consultation = await ConsultationRecords.deployed();
 
-  await patient.setDoctorContractAddress(doctor.address, { from: accounts[0] });
-  await doctor.setPatientContract(patient.address, { from: accounts[0] });
+  // Link contracts
+  await patient.setDoctorContractAddress(doctor.address);
+  await doctor.setPatientContract(patient.address);
 
-  console.log("DoctorRegistration at:", doctor.address);
-  console.log("PatientRegistration at:", patient.address);
+  // Simple verification checks
+  console.log("\n=== Deployment Verification ===");
+  console.log("Doctor Contract:", doctor.address);
+  console.log("Patient Contract:", patient.address);
+  console.log("Consultation Records:", consultation.address);
+  console.log("Doctor-Patient Link Status:", 
+    (await patient.doctorContractAddress()) === doctor.address ? "✅ Success" : "❌ Failed"
+  );
 };

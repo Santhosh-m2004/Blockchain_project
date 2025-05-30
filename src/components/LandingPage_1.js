@@ -1,3 +1,4 @@
+//LandingPage_1.js
 import React, { useState } from "react";
 import NavBar from "./NavBar";
 import "../CSS/LandingPage.css";

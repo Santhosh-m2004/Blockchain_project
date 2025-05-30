@@ -22,6 +22,7 @@ import PatientList from "./components/PatientList";
 import PatientProfile from "./components/PatientProfile";
 import ConsultancyForm from "./components/ConsultancyForm";
 
+
 const BrowseRouter = () => {
   const [web3, setWeb3] = useState(null);
   const [accounts, setAccounts] = useState([]);
@@ -67,6 +68,7 @@ const BrowseRouter = () => {
         <Route path="/patient/:hhNumber/viewprofile" element={<ViewProfile />} />
         <Route path="/doctor/:hhNumber/viewdoctorprofile" element={<ViewDoctorProfile />} />
         <Route path="/patient/:hhNumber/viewrecords" element={<ViewPatientRecords />} />
+        <Route path="/doctor/view-record/:hhNumber" element={<ViewPatientRecords />} />       
         
         {/* Permission & Records Management */}
         <Route path="/patient/:hhNumber/grantpermission" element={<GrantPermission />} />

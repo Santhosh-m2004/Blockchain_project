@@ -7,6 +7,7 @@ import "../CSS/DoctorRegistration.css";
 import NavBar from "./NavBar";
 
 const DoctorRegistry = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [web3, setWeb3] = useState(null);
   const [contract, setContract] = useState(null);
   const [doctorAddress, setDoctorAddress] = useState("");
@@ -216,337 +217,281 @@ const DoctorRegistry = () => {
 
   return (
     <div>
-    <NavBar></NavBar>
-    <div className="createehr min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-black to-gray-800 font-mono">
-      <div className="w-full max-w-2xl">
-        <h2 className="text-3xl text-white mb-6 font-bold text-center">
-          Doctor Registration
-        </h2>
-        <form className="bg-gray-900 p-6 rounded-lg shadow-lg grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="mb-4">
-            <label
-              className="block font-bold text-white"
-              htmlFor="doctorAddress"
-            >
-              Wallet Public Address
-            </label>
-            <input
-              id="doctorAddress"
-              name="doctorAddress"
-              type="text"
-              required
-              className="mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover:bg-gray-800 transition duration-200"
-              placeholder="Crypto Wallet's Public Address"
-              value={doctorAddress}
-              onChange={(e) => setDoctorAddress(e.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block font-bold text-white" htmlFor="doctorName">
-              Full Name
-            </label>
-            <input
-              id="doctorName"
-              name="doctorName"
-              type="text"
-              required
-              className="mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover:bg-gray-800 transition duration-200"
-              placeholder="Enter Full Name"
-              value={doctorName}
-              onChange={(e) => setDoctorName(e.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              className="block font-bold text-white"
-              htmlFor="hospitalName"
-            >
-              Hospital Name
-            </label>
-            <input
-              id="hospitalName"
-              name="hospitalName"
-              type="text"
-              required
-              className="mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover:bg-gray-800 transition duration-200"
-              placeholder="Enter Hospital Name"
-              value={hospitalName}
-              onChange={(e) => setHospitalName(e.target.value)}
-            />
-            </div>
-          <div className="mb-4">
-            <label
-              className="block font-bold text-white"
-              htmlFor="hospitalLocation"
-            >
-              Hospital Location
-            </label>
-            <input
-              id="hospitalLocation"
-              name="hospitalLocation"
-              type="text"
-              required
-              className="mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover:bg-gray-800 transition duration-200"
-              placeholder="Enter Hospital Location"
-              value={hospitalLocation}
-              onChange={(e) => setHospitalLocation(e.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block font-bold text-white" htmlFor="dateOfBirth">
-              Date of Birth
-            </label>
-            <input
-              id="dateOfBirth"
-              name="dateOfBirth"
-              type="date" // Use type="date" for date picker
-              required
-              className="mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover-bg-gray-800 transition duration-200"
-              value={dateOfBirth}
-              onChange={(e) => setDateOfBirth(e.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block font-bold text-white" htmlFor="gender">
-              Gender
-            </label>
-            <select
-              id="gender"
-              name="gender"
-              required
-              value={gender}
-              onChange={(e) => setGender(e.target.value)}
-              className="mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover-bg-gray-800 transition duration-200"
-            >
-              <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
+      <NavBar />
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="bg-white rounded-lg shadow-md p-8 max-w-3xl mx-auto w-full">
+          <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+            Doctor Registration
+          </h2>
+          <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2 md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700" htmlFor="doctorAddress">
+                Wallet Public Address
+              </label>
+              <input
+                type="text"
+                id="doctorAddress"
+                className="block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                placeholder="Crypto Wallet's Public Address"
+                value={doctorAddress}
+                onChange={(e) => setDoctorAddress(e.target.value)}
+              />
             </div>
 
-          <div className="mb-4">
-            <label className="block font-bold text-white" htmlFor="email">
-              Email Address
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              className={`mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover-bg-gray-800 transition duration-200 ${
-                emailError && "border-red-500"
-              }`}
-              placeholder="Enter your Email-id"
-              value={email}
-              onChange={handleEmailChange}
-            />
-            {emailError && (
-              <p className="text-red-500 text-sm mt-1">{emailError}</p>
-            )}
-          </div>
-            
-          <div className="mb-4">
-            <label className="block font-bold text-white" htmlFor="hhNumber">
-              Doctor Id
-            </label>
-            <input
-              id="hhNumber"
-              name="hhNumber"
-              type="text"
-              required
-              className={`mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover-bg-gray-800 transition duration-200 ${hhNumberError && "border-red-500"}`}
-              placeholder="Enter your Doctor Id"
-              value={hhNumber}
-              onChange={handlehhNumberChange}
-            />
-            {hhNumberError && (
-              <p className="text-red-500 text-sm mt-1">{hhNumberError}</p>
-            )}
-          </div>
-
-          <div className="mb-4">
-            <label
-              className="block font-bold text-white"
-              htmlFor="specialization"
-            >
-              Specialization
-            </label>
-            <select
-              id="specialization"
-              name="specialization"
-              required
-              className="mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover-bg-gray-800 transition duration-200"
-              value={specialization}
-              onChange={handleSpecializationChange}
-            >
-              <option value="">Select Specialization</option>
-              <option value="Cardiology">Cardiology</option>
-              <option value="Neurology">Neurology</option>
-              <option value="Oncology">Oncology</option>
-              <option value="Gynecology">Gynecology</option>
-              <option value="Dermatology">Dermatology</option>
-              <option value="Ophthalmology">Ophthalmology</option>
-              <option value="Psychiatry">Psychiatry</option>
-              <option value="Radiology">Radiology</option>
-              <option value="Other">Other</option>
-            </select>
-            {specialization === "Other" && (
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700" htmlFor="doctorName">
+                Full Name
+              </label>
               <input
                 type="text"
-                placeholder="Enter Other Specialization"
-                className="mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover-bg-gray-800 transition duration-200"
-                value={specializationError}
-                onChange={(e) => setSpecializationError(e.target.value)}
+                id="doctorName"
+                className="block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                placeholder="Enter Full Name"
+                value={doctorName}
+                onChange={(e) => setDoctorName(e.target.value)}
               />
-            )}
-          </div>
+            </div>
 
-          <div className="mb-4">
-            <label
-              className="block font-bold text-white"
-              htmlFor="department"
-            >
-              Department
-            </label>
-            <select
-              id="department"
-              name="department"
-              required
-              className="mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover-bg-gray-800 transition duration-200"
-              value={department}
-              onChange={handleDepartmentChange}
-            >
-              <option value="">Select Department</option>
-              <option value="Casualty">Casualty</option>
-              <option value="Surgery">Surgery</option>
-              <option value="Laboratory Services">Consultancy</option>
-              <option value="Other">Other</option>
-            </select>
-            {department === "Other" && (
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700" htmlFor="hospitalName">
+                Hospital Name
+              </label>
               <input
                 type="text"
-                placeholder="Enter Other Department"
-                className="mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover-bg-gray-800 transition duration-200"
-                value={departmentError}
-                onChange={(e) => setDepartmentError(e.target.value)}
+                id="hospitalName"
+                className="block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                placeholder="Enter Hospital Name"
+                value={hospitalName}
+                onChange={(e) => setHospitalName(e.target.value)}
               />
-            )}
-          </div>
+            </div>
 
-          <div className="mb-4">
-            <label
-              className="block font-bold text-white"
-              htmlFor="designation"
-            >
-              Designation
-            </label>
-            <select
-              id="designation"
-              name="designation"
-              required
-              className="mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover-bg-gray-800 transition duration-200"
-              value={designation}
-              onChange={handleDesignationChange}
-            >
-              <option value="">Select Designation</option>
-              <option value="Doctor">Doctor</option>
-              <option value="Surgeon">Surgeon</option>
-              <option value="Nurse">Nurse</option>
-              <option value="Other">Other</option>
-            </select>
-            {designation === "Other" && (
+            <div className="space-y-2 md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700" htmlFor="hospitalLocation">
+                Hospital Location
+              </label>
               <input
                 type="text"
-                placeholder="Enter Other Designation"
-                className="mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover-bg-gray-800 transition duration-200"
-                value={designationError}
-                onChange={(e) => setDesignationError(e.target.value)}
+                id="hospitalLocation"
+                className="block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                placeholder="Enter Hospital Location"
+                value={hospitalLocation}
+                onChange={(e) => setHospitalLocation(e.target.value)}
               />
-            )}
-          </div>
+            </div>
 
-          <div className="mb-4">
-            <label
-              className="block font-bold text-white"
-              htmlFor="workExperience"
-            >
-              Work Experience
-            </label>
-            <input
-              id="workExperience"
-              name="workExperience"
-              type="number"
-              required
-              className="mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover-bg-gray-800 transition duration-200"
-              placeholder="Years"
-              min="0"
-              value={workExperience}
-              onChange={(e) => setWorkExperience(e.target.value)}
-            />
-          </div>
-          
-          <div className="mb-4">
-              <label className="block font-bold text-white" htmlFor="password">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700" htmlFor="dateOfBirth">
+                Date of Birth
+              </label>
+              <input
+                type="date"
+                id="dateOfBirth"
+                className="block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                value={dateOfBirth}
+                onChange={(e) => setDateOfBirth(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700" htmlFor="gender">
+                Gender
+              </label>
+              <select
+                id="gender"
+                className="block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 pr-10 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+              >
+                <option value="">Select Gender</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700" htmlFor="email">
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                className="block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                placeholder="Enter your Email-id"
+                value={email}
+                onChange={handleEmailChange}
+              />
+              {emailError && <p className="text-sm text-red-600 mt-2">{emailError}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700" htmlFor="hhNumber">
+                Doctor ID
+              </label>
+              <input
+                type="text"
+                id="hhNumber"
+                className="block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                placeholder="Enter your Doctor Id"
+                value={hhNumber}
+                onChange={handlehhNumberChange}
+              />
+              {hhNumberError && <p className="text-sm text-red-600 mt-2">{hhNumberError}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700" htmlFor="specialization">
+                Specialization
+              </label>
+              <select
+                id="specialization"
+                className="block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 pr-10 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                value={specialization}
+                onChange={handleSpecializationChange}
+              >
+                <option value="">Select Specialization</option>
+                <option>Cardiology</option>
+                <option>Neurology</option>
+                <option>Oncology</option>
+                <option>Gynecology</option>
+                <option>Dermatology</option>
+                <option>Ophthalmology</option>
+                <option>Psychiatry</option>
+                <option>Radiology</option>
+                <option>Other</option>
+              </select>
+              {specialization === "Other" && (
+                <input
+                  type="text"
+                  placeholder="Enter Other Specialization"
+                  className="mt-2 block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                  value={specializationError}
+                  onChange={(e) => setSpecializationError(e.target.value)}
+                />
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700" htmlFor="department">
+                Department
+              </label>
+              <select
+                id="department"
+                className="block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 pr-10 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                value={department}
+                onChange={handleDepartmentChange}
+              >
+                <option value="">Select Department</option>
+                <option>Casualty</option>
+                <option>Surgery</option>
+                <option>Consultancy</option>
+                <option>Other</option>
+              </select>
+              {department === "Other" && (
+                <input
+                  type="text"
+                  placeholder="Enter Other Department"
+                  className="mt-2 block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                  value={departmentError}
+                  onChange={(e) => setDepartmentError(e.target.value)}
+                />
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700" htmlFor="designation">
+                Designation
+              </label>
+              <select
+                id="designation"
+                className="block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 pr-10 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                value={designation}
+                onChange={handleDesignationChange}
+              >
+                <option value="">Select Designation</option>
+                <option>Doctor</option>
+                <option>Surgeon</option>
+                <option>Nurse</option>
+                <option>Other</option>
+              </select>
+              {designation === "Other" && (
+                <input
+                  type="text"
+                  placeholder="Enter Other Designation"
+                  className="mt-2 block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                  value={designationError}
+                  onChange={(e) => setDesignationError(e.target.value)}
+                />
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700" htmlFor="workExperience">
+                Work Experience
+              </label>
+              <input
+                type="number"
+                id="workExperience"
+                className="block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                placeholder="Years"
+                min="0"
+                value={workExperience}
+                onChange={(e) => setWorkExperience(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700" htmlFor="password">
                 Password
               </label>
               <input
-                id="password"
-                name="password"
                 type="password"
-                required
-                className={`mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover-bg-gray-800 transition duration-200 ${
-                  passwordError && "border-red-500"
-                }`}
+                id="password"
+                className="block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
                 placeholder="Enter your Password"
                 value={password}
                 onChange={handlePasswordChange}
               />
-              {passwordError && (
-                <p className="text-red-500 text-sm mt-1">{passwordError}</p>
-              )}
-          </div>
-            
-          <div className="mb-4">
-              <label className="block font-bold text-white" htmlFor="confirmPassword">
+              {passwordError && <p className="text-sm text-red-600 mt-2">{passwordError}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700" htmlFor="confirmPassword">
                 Confirm Password
               </label>
               <input
-                id="confirmPassword"
-                name="confirmPassword"
                 type="password"
-                required
-                className={`mt-2 p-2 w-full text-white bg-gray-700 border border-gray-600 rounded-md hover-bg-gray-800 transition duration-200 ${
-                  confirmPasswordError && "border-red-500"
-                }`}
+                id="confirmPassword"
+                className="block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
                 placeholder="Confirm your Password"
                 value={confirmPassword}
                 onChange={handleConfirmPasswordChange}
               />
-              {confirmPasswordError && (
-                <p className="text-red-500 text-sm mt-1">{confirmPasswordError}</p>
-              )}
-          </div>
+              {confirmPasswordError && <p className="text-sm text-red-600 mt-2">{confirmPasswordError}</p>}
+            </div>
 
-        </form>
-        <div className="space-x-4 text-center mt-6">
-          <button
-            type="button"
-            onClick={handleRegister}
-            className="py-3 px-4 bg-teal-500 text-white rounded-md font-medium hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
-          >
-            Register 
-            </button>
-            <button
-              onClick={cancelOperation}
-              className="py-3 px-4 bg-teal-500 text-white rounded-md font-medium hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+            <div className="md:col-span-2 flex justify-end gap-4 mt-6">
+              <button
+  type="button"
+  onClick={handleRegister}
+  disabled={!contract || isLoading}
+  className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+>
+  {isLoading ? 'Registering...' : 'Register'}
+</button>
+              <button
+                type="button"
+                onClick={cancelOperation}
+                className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200"
               >
-              Close
-            </button>
+                Close
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-      </div>
-      </div>
+    </div>
   );
 };
 
