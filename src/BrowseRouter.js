@@ -20,7 +20,7 @@ import GrantPermission from "./components/GrantPermission";
 import UploadRecords from "./components/UploadRecords";
 import PatientList from "./components/PatientList";
 import PatientProfile from "./components/PatientProfile";
-import ConsultancyForm from "./components/ConsultancyForm";
+import ConsultancyForm from "./components/DoctorConsultationForm";
 
 
 const BrowseRouter = () => {

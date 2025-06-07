@@ -35,6 +35,7 @@ contract ConsultationRecords {
         patientContract = PatientRegistration(_patientContract);
         doctorContract = DoctorRegistration(_doctorContract);
     }
+    Consultation[] public allConsultations;
 
     function createConsultationRecord(
         string memory _patientNumber,
@@ -73,7 +74,11 @@ contract ConsultationRecords {
         patientConsultations[_patientNumber].push(_recordId);
         
         emit ConsultationCreated(_patientNumber, _recordId, msg.sender);
+        allConsultations.push(newConsultation);
     }
+    function getAllConsultations() external view returns (Consultation[] memory) {
+    return allConsultations;
+}
 
     function getPatientConsultations(string memory _patientNumber) 
         external view returns (Consultation[] memory) 
