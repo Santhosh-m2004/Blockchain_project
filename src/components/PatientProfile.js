@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Web3 from "web3";
 import PatientRegistration from "../build/contracts/PatientRegistration.json";
+import DoctorRegistration from "../build/contracts/DoctorRegistration.json";
 
 const PatientProfile = () => {
   const navigate = useNavigate();
@@ -9,6 +10,7 @@ const PatientProfile = () => {
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [doctorHhNumber, setDoctorHhNumber] = useState("");
 
   useEffect(() => {
     const loadPatient = async () => {
@@ -45,6 +47,21 @@ const PatientProfile = () => {
           address: patientDetails[5],
           email: patientDetails[6],
         });
+       const doctorNetwork = DoctorRegistration.networks[networkId];
+        if (!doctorNetwork) {
+          throw new Error("Doctor contract not deployed on this network");
+        }
+        
+        const doctorContract = new web3.eth.Contract(
+          DoctorRegistration.abi,
+          doctorNetwork.address
+        );
+        
+        const doctorId = await doctorContract.methods
+          .getDoctorNumberByAddress(accounts[0])
+          .call();
+        
+        setDoctorHhNumber(doctorId);
       } catch (error) {
         console.error("Error loading patient profile:", error);
         setError(error.message);
@@ -55,6 +72,11 @@ const PatientProfile = () => {
 
     loadPatient();
   }, [hhNumber]);
+  const handleViewPastConsultations = () => {
+    if (doctorHhNumber) {
+      navigate(`/doctor/past-consultations/${hhNumber}/${doctorHhNumber}`);
+    }
+  };
 
   if (loading) {
     return (
@@ -220,6 +242,16 @@ const PatientProfile = () => {
                   <path d="M4 5a2 2 0 012-2h1a1 1 0 010 2H6v7a2 2 0 002 2h6a2 2 0 002-2V7h-1a1 1 0 110-2h1a2 2 0 012 2v9a4 4 0 01-4 4H6a4 4 0 01-4-4V5z" />
                 </svg>
                 Prescription
+              </button>
+              <button
+                className="flex items-center justify-center px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-medium transition-colors"
+                onClick={handleViewPastConsultations}
+                disabled={!doctorHhNumber}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+                </svg>
+                Past Consultations
               </button>
               
               <button

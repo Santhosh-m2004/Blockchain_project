@@ -21,6 +21,8 @@ import UploadRecords from "./components/UploadRecords";
 import PatientList from "./components/PatientList";
 import PatientProfile from "./components/PatientProfile";
 import ConsultancyForm from "./components/DoctorConsultationForm";
+import AllConsultations from "./components/AllConsultations";
+import DoctorPatientConsultations from "./components/DoctorPatientConsultations";
 
 
 const BrowseRouter = () => {
@@ -78,6 +80,9 @@ const BrowseRouter = () => {
         {/* Consultation & Patient Viewing */}
         <Route path="/doctor/view-profile/:hhNumber" element={<PatientProfile />} />
         <Route path="/doctor/consultancy/:hhNumber" element={<ConsultancyForm />} />
+        <Route path="/patient/:hhNumber/prescriptions" element={<AllConsultations />} />
+        <Route path="/doctor/past-consultations/:patientHhNumber/:doctorHhNumber" element={<DoctorPatientConsultations />} 
+/>
         
         {/* Diagnostic Routes (keep if needed) */}
         <Route path="/diagnostic/:hhNumber" element={<DiagnosticForm />} />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PatientRegistration from "../build/contracts/PatientRegistration.json";
+import DoctorRegistration from "../build/contracts/DoctorRegistration.json";
 import Web3 from "web3";
 import { useNavigate, useParams } from "react-router-dom";
 import NavBarLogout from "./NavBar_Logout";
@@ -11,6 +12,7 @@ const ViewProfile = () => {
   const [patientDetails, setPatientDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [doctorHhNumber, setDoctorHhNumber] = useState("");
 
   useEffect(() => {
     const init = async () => {
@@ -41,7 +43,34 @@ const ViewProfile = () => {
           .getPatientDetails(hhNumber)
           .call();
           
-        setPatientDetails(result);
+        setPatientDetails({
+          walletAddress: result[0],
+          name: result[1],
+          dateOfBirth: result[2],
+          gender: result[3],
+          bloodGroup: result[4],
+          homeAddress: result[5],
+          email: result[6],
+          records: result[7]
+        });
+        
+        // Get doctor's ID
+        const doctorDeployedNetwork = DoctorRegistration.networks[networkId];
+        if (!doctorDeployedNetwork) {
+          throw new Error("Doctor contract not deployed");
+        }
+        
+        const doctorContract = new web3Instance.eth.Contract(
+          DoctorRegistration.abi,
+          doctorDeployedNetwork.address
+        );
+        
+        const accounts = await web3Instance.eth.getAccounts();
+        const doctorId = await doctorContract.methods
+          .getDoctorNumberByAddress(accounts[0])
+          .call();
+        
+        setDoctorHhNumber(doctorId);
       } catch (error) {
         console.error('Error retrieving patient details:', error);
         setError(error.message);
@@ -55,6 +84,12 @@ const ViewProfile = () => {
 
   const handleClose = () => {
     navigate(`/patient/${hhNumber}`);
+  };
+
+  const handlePastConsultations = () => {
+    if (doctorHhNumber) {
+      navigate(`/doctor/past-consultations/${hhNumber}/${doctorHhNumber}`);
+    }
   };
 
   if (loading) {
@@ -216,15 +251,30 @@ const ViewProfile = () => {
               </div>
             )}
             
-            <div className="mt-10 text-center">
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <button
                 onClick={handleClose}
-                className="px-6 py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl font-medium transition-colors inline-flex items-center"
+                className="px-6 py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl font-medium transition-colors inline-flex items-center justify-center"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
                 </svg>
                 Back to Dashboard
+              </button>
+              
+              <button
+                onClick={handlePastConsultations}
+                disabled={!doctorHhNumber}
+                className={`px-6 py-3 rounded-xl font-medium transition-colors inline-flex items-center justify-center ${
+                  doctorHhNumber 
+                    ? "bg-purple-600 hover:bg-purple-700 text-white" 
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+                </svg>
+                Past Consultations
               </button>
             </div>
           </div>

@@ -192,10 +192,7 @@ const PatientDashBoard = () => {
                   
                   {consultations.length > 3 && (
                     <div className="mt-6 text-center">
-                      <button
-                        onClick={viewPrescriptions}
-                        className="text-indigo-600 hover:text-indigo-800 font-medium"
-                      >
+                      <button onClick={viewPrescriptions} className="text-indigo-600 hover:text-indigo-800 font-medium">
                         View All Consultations →
                       </button>
                     </div>
