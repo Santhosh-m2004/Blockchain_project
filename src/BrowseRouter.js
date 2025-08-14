@@ -23,6 +23,7 @@ import PatientProfile from "./components/PatientProfile";
 import ConsultancyForm from "./components/DoctorConsultationForm";
 import AllConsultations from "./components/AllConsultations";
 import DoctorPatientConsultations from "./components/DoctorPatientConsultations";
+import AppointmentsDashboard from "./components/AppointmentsDashboard";
 
 
 const BrowseRouter = () => {
@@ -84,8 +85,15 @@ const BrowseRouter = () => {
         <Route path="/doctor/past-consultations/:patientHhNumber/:doctorHhNumber" element={<DoctorPatientConsultations />} 
 />
         
-        {/* Diagnostic Routes (keep if needed) */}
+        {/* Diagnostic Routes*/}
         <Route path="/diagnostic/:hhNumber" element={<DiagnosticForm />} />
+
+        {/*Doctor - Appointment DashBoard */}
+         <Route 
+          path="/doctor/:hhNumber/appointments" 
+          element={<AppointmentsDashboard />} 
+        />
+        
       </Routes>
       <Footer />
     </BrowserRouter>

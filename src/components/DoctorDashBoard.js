@@ -1,3 +1,4 @@
+// src/components/DoctorDashBoardPage.js
 import React, { useState, useEffect } from "react";
 import Web3 from "web3";
 import { useParams, useNavigate } from "react-router-dom";
@@ -18,7 +19,7 @@ const DoctorDashBoardPage = () => {
 
   const viewPatientList = () => navigate(`/doctor/${hhNumber}/patientlist`);
   const viewDoctorProfile = () => navigate(`/doctor/${hhNumber}/viewdoctorprofile`);
-  const viewCalendar = () => navigate(`/doctor/${hhNumber}/schedule`);
+  const viewAppointments = () => navigate(`/doctor/${hhNumber}/appointments`);
   const viewNotifications = () => navigate(`/doctor/${hhNumber}/notifications`);
 
   useEffect(() => {
@@ -180,7 +181,7 @@ const DoctorDashBoardPage = () => {
               </button>
 
               <button
-                onClick={viewCalendar}
+                onClick={viewAppointments}
                 className="p-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex flex-col items-center"
               >
                 <span className="text-lg font-medium">Schedule</span>
