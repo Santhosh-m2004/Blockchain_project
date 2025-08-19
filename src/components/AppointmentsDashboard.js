@@ -1,9 +1,9 @@
-// src/components/doctor/AppointmentsDashboard.jsx
+// src/components/AppointmentsDashboard.js
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Web3 from 'web3';
 import DoctorRegistration from '../build/contracts/DoctorRegistration.json';
-import ConsultationRecords from '../build/contracts/ConsultationRecords.json';
+import AppointmentManagement from '../build/contracts/AppointmentManagement.json';
 
 const AppointmentsDashboard = () => {
   const { hhNumber } = useParams();
@@ -16,6 +16,7 @@ const AppointmentsDashboard = () => {
     reason: ''
   });
   const [patients, setPatients] = useState([]);
+  const [appointmentContract, setAppointmentContract] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -40,6 +41,16 @@ const AppointmentsDashboard = () => {
           doctorDeployedNetwork.address
         );
         
+        // Load appointment management contract
+        const appointmentDeployedNetwork = AppointmentManagement.networks[networkId];
+        if (!appointmentDeployedNetwork) {
+          throw new Error("AppointmentManagement contract not deployed on current network");
+        }
+        const appointmentContractInstance = new web3.eth.Contract(
+          AppointmentManagement.abi,
+          appointmentDeployedNetwork.address
+        );
+        
         // Get doctor's patient list
         const patientList = await doctorContract.methods
           .getPatientList(hhNumber)
@@ -50,6 +61,24 @@ const AppointmentsDashboard = () => {
           name: p.patient_name
         })));
 
+        // Load existing appointments
+        const doctorAppointments = await appointmentContractInstance.methods
+          .getDoctorAppointments(hhNumber)
+          .call();
+        
+        // Format appointments for display
+        const formattedAppointments = doctorAppointments.map(appt => ({
+          id: appt.id.toString(),
+          patientId: appt.patientNumber,
+          patientName: patientList.find(p => p.patient_number === appt.patientNumber)?.patient_name || 'Unknown',
+          date: new Date(appt.date * 1000).toISOString().split('T')[0],
+          time: `${appt.timeSlot}:00`, // Convert time slot to HH:00 format
+          reason: appt.reason,
+          status: appt.status
+        }));
+
+        setAppointments(formattedAppointments);
+        setAppointmentContract(appointmentContractInstance);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -61,61 +90,88 @@ const AppointmentsDashboard = () => {
     initContracts();
   }, [hhNumber]);
 
-  const handleCreateAppointment = async (e) => {
-    e.preventDefault();
-    
-    try {
-      const web3 = new Web3(window.ethereum);
-      const networkId = await web3.eth.net.getId();
-      const accounts = await web3.eth.getAccounts();
+// In your handleCreateAppointment function
+    const handleCreateAppointment = async (e) => {
+      e.preventDefault();
       
-      // Load consultation contract
-      const consultationDeployedNetwork = ConsultationRecords.networks[networkId];
-      if (!consultationDeployedNetwork) {
-        throw new Error("ConsultationRecords contract not deployed on current network");
+      try {
+        const web3 = new Web3(window.ethereum);
+        const accounts = await web3.eth.getAccounts();
+        
+        // Convert date to timestamp (ensure it's in UTC)
+        const dateObj = new Date(newAppointment.date);
+        const dateTimestamp = Math.floor(dateObj.getTime() / 1000);
+        
+        // Extract hour from time (handle both HH:MM and HH:MM:SS formats)
+        const timeParts = newAppointment.time.split(':');
+        const hour = parseInt(timeParts[0]);
+        
+        // Create appointment using the new contract
+        await appointmentContract.methods
+          .createAppointment(
+            newAppointment.patientId,
+            hhNumber, // doctor number from URL params
+            dateTimestamp,
+            hour,
+            newAppointment.reason
+          )
+          .send({ 
+            from: accounts[0],
+            gas: 500000 // Increase gas limit if needed
+          });
+        
+        // Refresh appointments
+        const updatedAppointments = await appointmentContract.methods
+          .getDoctorAppointments(hhNumber)
+          .call();
+        
+        // Get patient list again to ensure we have names
+        const networkId = await web3.eth.net.getId();
+        const doctorDeployedNetwork = DoctorRegistration.networks[networkId];
+        const doctorContract = new web3.eth.Contract(
+          DoctorRegistration.abi,
+          doctorDeployedNetwork.address
+        );
+        
+        const patientList = await doctorContract.methods
+          .getPatientList(hhNumber)
+          .call();
+        
+        // Format appointments for display
+        const formattedAppointments = updatedAppointments.map(appt => ({
+          id: appt.id.toString(),
+          patientId: appt.patientNumber,
+          patientName: patientList.find(p => p.patient_number === appt.patientNumber)?.patient_name || 'Unknown',
+          date: new Date(appt.date * 1000).toISOString().split('T')[0],
+          time: `${appt.timeSlot}:00`,
+          reason: appt.reason,
+          status: appt.status
+        }));
+        
+        setAppointments(formattedAppointments);
+        
+        // Reset form
+        setNewAppointment({
+          patientId: '',
+          date: '',
+          time: '',
+          reason: ''
+        });
+        
+      } catch (error) {
+        console.error("Error creating appointment:", error);
+        
+        // Extract error message if available
+        let errorMsg = "Appointment creation failed";
+        if (error.message) {
+          errorMsg += `: ${error.message}`;
+        } else if (error.data && error.data.message) {
+          errorMsg += `: ${error.data.message}`;
+        }
+        
+        setError(errorMsg);
       }
-      const consultationContract = new web3.eth.Contract(
-        ConsultationRecords.abi,
-        consultationDeployedNetwork.address
-      );
-
-      // Generate unique record ID
-      const recordId = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-      
-      // Create appointment record
-      await consultationContract.methods
-        .createConsultationRecord(
-          newAppointment.patientId,
-          recordId,
-          `Appointment scheduled for ${newAppointment.date} ${newAppointment.time}`,
-          newAppointment.reason
-        )
-        .send({ from: accounts[0] });
-
-      // Update UI
-      setAppointments([...appointments, {
-        id: recordId,
-        patientId: newAppointment.patientId,
-        patientName: patients.find(p => p.number === newAppointment.patientId)?.name || 'Unknown',
-        date: newAppointment.date,
-        time: newAppointment.time,
-        reason: newAppointment.reason,
-        status: 'Scheduled'
-      }]);
-      
-      // Reset form
-      setNewAppointment({
-        patientId: '',
-        date: '',
-        time: '',
-        reason: ''
-      });
-      
-    } catch (error) {
-      console.error("Error creating appointment:", error);
-      setError(`Appointment creation failed: ${error.message}`);
-    }
-  };
+    };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -125,37 +181,38 @@ const AppointmentsDashboard = () => {
   const cancelAppointment = async (appointmentId) => {
     try {
       const web3 = new Web3(window.ethereum);
-      const networkId = await web3.eth.net.getId();
       const accounts = await web3.eth.getAccounts();
       
-      // Load consultation contract
-      const consultationDeployedNetwork = ConsultationRecords.networks[networkId];
-      if (!consultationDeployedNetwork) {
-        throw new Error("ConsultationRecords contract not deployed on current network");
-      }
-      const consultationContract = new web3.eth.Contract(
-        ConsultationRecords.abi,
-        consultationDeployedNetwork.address
-      );
-
-      // Find the appointment
-      const appointment = appointments.find(a => a.id === appointmentId);
-      if (!appointment) return;
-
-      // Update blockchain record
-      await consultationContract.methods
-        .createConsultationRecord(
-          appointment.patientId,
-          appointmentId,
-          "APPOINTMENT CANCELLED",
-          "Patient appointment cancelled by doctor"
-        )
+      await appointmentContract.methods
+        .cancelAppointment(appointmentId)
         .send({ from: accounts[0] });
-
-      // Update UI
-      setAppointments(appointments.map(app => 
-        app.id === appointmentId ? { ...app, status: 'Cancelled' } : app
-      ));
+      
+      // Refresh appointments
+      const updatedAppointments = await appointmentContract.methods
+        .getDoctorAppointments(hhNumber)
+        .call();
+      
+      // Get patient list again to ensure we have names
+      const doctorContract = new web3.eth.Contract(
+        DoctorRegistration.abi,
+        DoctorRegistration.networks[await web3.eth.net.getId()].address
+      );
+      const patientList = await doctorContract.methods
+        .getPatientList(hhNumber)
+        .call();
+      
+      // Format appointments for display
+      const formattedAppointments = updatedAppointments.map(appt => ({
+        id: appt.id.toString(),
+        patientId: appt.patientNumber,
+        patientName: patientList.find(p => p.patient_number === appt.patientNumber)?.patient_name || 'Unknown',
+        date: new Date(appt.date * 1000).toISOString().split('T')[0],
+        time: `${appt.timeSlot}:00`,
+        reason: appt.reason,
+        status: appt.status
+      }));
+      
+      setAppointments(formattedAppointments);
       
     } catch (error) {
       console.error("Error cancelling appointment:", error);
@@ -321,7 +378,11 @@ const AppointmentsDashboard = () => {
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                           appointment.status === 'Scheduled' 
                             ? 'bg-blue-100 text-blue-800' 
-                            : 'bg-red-100 text-red-800'
+                            : appointment.status === 'Cancelled'
+                            ? 'bg-red-100 text-red-800'
+                            : appointment.status === 'Completed'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
                         }`}>
                           {appointment.status}
                         </span>
@@ -330,17 +391,14 @@ const AppointmentsDashboard = () => {
                         <div className="flex space-x-2">
                           <button 
                             onClick={() => cancelAppointment(appointment.id)}
-                            disabled={appointment.status === 'Cancelled'}
+                            disabled={appointment.status !== 'Scheduled'}
                             className={`px-3 py-1 rounded-lg text-sm ${
-                              appointment.status === 'Cancelled'
+                              appointment.status !== 'Scheduled'
                                 ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                                 : 'bg-red-100 text-red-700 hover:bg-red-200'
                             }`}
                           >
                             Cancel
-                          </button>
-                          <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200">
-                            Reschedule
                           </button>
                         </div>
                       </td>
