@@ -1,11 +1,10 @@
-// PatientDashBoard.js
 import React, { useEffect, useState } from "react";
 import Web3 from "web3";
 import { useParams, useNavigate } from "react-router-dom";
-import "../CSS/PatientDashBoard.css";
 import NavBarLogout from "./NavBar_Logout";
 import PatientRegistration from "../build/contracts/PatientRegistration.json";
 import ConsultationRecords from "../build/contracts/ConsultationRecords.json";
+import AppointmentManagement from "../build/contracts/AppointmentManagement.json";
 
 const PatientDashBoard = () => {
   const { hhNumber } = useParams();
@@ -16,9 +15,11 @@ const PatientDashBoard = () => {
   const uploadRecords = () => navigate(`/patient/${hhNumber}/uploadrecords`);
   const grantPermission = () => navigate(`/patient/${hhNumber}/grantpermission`);
   const viewPrescriptions = () => navigate(`/patient/${hhNumber}/prescriptions`);
+  const viewAppointments = () => navigate(`/patient/${hhNumber}/appointments`);
 
   const [patientDetails, setPatientDetails] = useState(null);
   const [consultations, setConsultations] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -30,6 +31,7 @@ const PatientDashBoard = () => {
           return;
         }
 
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
         const web3 = new Web3(window.ethereum);
         const networkId = await web3.eth.net.getId();
         
@@ -67,8 +69,32 @@ const PatientDashBoard = () => {
           .call();
         
         setConsultations(consultationResult);
+
+        // Load appointment records
+        const appointmentNetwork = AppointmentManagement.networks[networkId];
+        if (!appointmentNetwork) {
+          setError("Appointment contract not deployed");
+          return;
+        }
+
+        const appointmentContract = new web3.eth.Contract(
+          AppointmentManagement.abi,
+          appointmentNetwork.address
+        );
+
+        const appointmentResult = await appointmentContract.methods
+          .getPatientAppointments(hhNumber)
+          .call();
+
+        // Filter only upcoming appointments
+        const currentTime = Math.floor(Date.now() / 1000);
+        const upcomingAppointments = appointmentResult.filter(
+          appt => appt.date >= currentTime && appt.status === "Scheduled"
+        );
+
+        setAppointments(upcomingAppointments);
       } catch (err) {
-        setError("Error retrieving data");
+        setError("Error retrieving data: " + err.message);
         console.error("Error:", err);
       } finally {
         setLoading(false);
@@ -78,9 +104,49 @@ const PatientDashBoard = () => {
     init();
   }, [hhNumber]);
 
+  const cancelAppointment = async (appointmentId) => {
+    try {
+      setError(null);
+      const web3 = new Web3(window.ethereum);
+      const accounts = await web3.eth.getAccounts();
+      const networkId = await web3.eth.net.getId();
+      
+      const appointmentNetwork = AppointmentManagement.networks[networkId];
+      const appointmentContract = new web3.eth.Contract(
+        AppointmentManagement.abi,
+        appointmentNetwork.address
+      );
+      
+      await appointmentContract.methods
+        .cancelAppointment(appointmentId)
+        .send({ from: accounts[0], gas: 300000 });
+      
+      // Refresh appointments
+      const updatedAppointments = await appointmentContract.methods
+        .getPatientAppointments(hhNumber)
+        .call();
+      
+      const currentTime = Math.floor(Date.now() / 1000);
+      const upcomingAppointments = updatedAppointments.filter(
+        appt => appt.date >= currentTime && appt.status === "Scheduled"
+      );
+      
+      setAppointments(upcomingAppointments);
+      
+    } catch (error) {
+      console.error("Error cancelling appointment:", error);
+      setError("Failed to cancel appointment: " + error.message);
+    }
+  };
+
   // Format timestamp to readable date
   const formatDate = (timestamp) => {
-    return new Date(timestamp * 1000).toLocaleDateString();
+    return new Date(parseInt(timestamp) * 1000).toLocaleDateString();
+  };
+
+  // Format time slot to readable time
+  const formatTime = (timeSlot) => {
+    return `${timeSlot}:00`;
   };
 
   return (
@@ -99,7 +165,18 @@ const PatientDashBoard = () => {
                 <p className="mt-4 text-gray-600">Loading dashboard...</p>
               </div>
             ) : error ? (
-              <p className="text-center text-red-600 mb-8">{error}</p>
+              <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-red-700">{error}</p>
+                  </div>
+                </div>
+              </div>
             ) : (
               <>
                 <div className="text-center mb-8">
@@ -141,11 +218,78 @@ const PatientDashBoard = () => {
                   </button>
                 </div>
 
+                {/* Upcoming Appointments Section */}
+                <div className="mt-8">
+                  <div className="flex justify-between items-center mb-4 pb-2 border-b">
+                    <h3 className="text-xl font-semibold text-gray-800">
+                      Upcoming Appointments
+                    </h3>
+                    <button 
+                      onClick={viewAppointments}
+                      className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+                    >
+                      View All →
+                    </button>
+                  </div>
+                  
+                  {appointments.length === 0 ? (
+                    <p className="text-center text-gray-500 py-6">
+                      No upcoming appointments
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      {appointments.slice(0, 3).map((appt, index) => (
+                        <div 
+                          key={index}
+                          className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h4 className="font-medium text-gray-900">
+                                Appointment with Doctor {appt.doctorNumber}
+                              </h4>
+                              <p className="text-sm text-gray-500">
+                                {formatDate(appt.date)} at {formatTime(appt.timeSlot)}
+                              </p>
+                            </div>
+                            <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
+                              {appt.status}
+                            </span>
+                          </div>
+                          
+                          <div className="mt-3">
+                            <p className="text-sm text-gray-700">
+                              <span className="font-medium">Reason:</span> {appt.reason}
+                            </p>
+                          </div>
+                          
+                          <div className="mt-4 flex space-x-2">
+                            <button 
+                              className="px-3 py-1 bg-red-100 text-red-700 text-sm rounded hover:bg-red-200"
+                              onClick={() => cancelAppointment(appt.id)}
+                            >
+                              Cancel Appointment
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 {/* Recent Consultations Section */}
                 <div className="mt-8">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b">
-                    Recent Consultations
-                  </h3>
+                  <div className="flex justify-between items-center mb-4 pb-2 border-b">
+                    <h3 className="text-xl font-semibold text-gray-800">
+                      Recent Consultations
+                    </h3>
+                    <button 
+                      onClick={viewPrescriptions}
+                      className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+                    >
+                      View All →
+                    </button>
+                  </div>
                   
                   {consultations.length === 0 ? (
                     <p className="text-center text-gray-500 py-6">
@@ -187,14 +331,6 @@ const PatientDashBoard = () => {
                           </div>
                         </div>
                       ))}
-                    </div>
-                  )}
-                  
-                  {consultations.length > 3 && (
-                    <div className="mt-6 text-center">
-                      <button onClick={viewPrescriptions} className="text-indigo-600 hover:text-indigo-800 font-medium">
-                        View All Consultations →
-                      </button>
                     </div>
                   )}
                 </div>

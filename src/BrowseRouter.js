@@ -24,7 +24,8 @@ import ConsultancyForm from "./components/DoctorConsultationForm";
 import AllConsultations from "./components/AllConsultations";
 import DoctorPatientConsultations from "./components/DoctorPatientConsultations";
 import AppointmentsDashboard from "./components/AppointmentsDashboard";
-
+import PatientAppointments from "./components/PatientAppointments";
+import DoctorNotifications from "./components/DoctorNotifications";
 
 const BrowseRouter = () => {
   const [web3, setWeb3] = useState(null);
@@ -89,10 +90,10 @@ const BrowseRouter = () => {
         <Route path="/diagnostic/:hhNumber" element={<DiagnosticForm />} />
 
         {/*Doctor - Appointment DashBoard */}
-         <Route 
-          path="/doctor/:hhNumber/appointments" 
-          element={<AppointmentsDashboard />} 
-        />
+         <Route path="/doctor/:hhNumber/appointments" element={<AppointmentsDashboard />} />
+        <Route path="/doctor/:hhNumber/notifications" element={<DoctorNotifications />} />
+
+        <Route path="/patient/:hhNumber/appointments" element={<PatientAppointments/>} />
         
       </Routes>
       <Footer />
