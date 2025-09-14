@@ -1,5 +1,3 @@
-//AdminDashBoardPage.js
-
 import React, { useState, useEffect } from "react";
 import Web3 from "web3";
 import { useNavigate } from "react-router-dom";
@@ -134,29 +132,29 @@ const AdminDashboardPage = () => {
         switch(activeSection) {
             case "patients":
                 return (
-                    <div className="bg-gray-800/50 rounded-2xl p-6 backdrop-blur-lg border border-gray-700">
-                        <h2 className="text-xl font-semibold mb-6 text-purple-400">Patients</h2>
-                        <div className="overflow-x-auto rounded-xl">
+                    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                        <h2 className="text-xl font-semibold mb-6 text-blue-600">Patients</h2>
+                        <div className="overflow-x-auto rounded-lg">
                             <table className="w-full border-collapse">
-                                <thead className="bg-gray-800 sticky top-0">
+                                <thead className="bg-gray-100">
                                     <tr>
-                                        <th className="px-6 py-4 text-left text-gray-400 font-semibold uppercase tracking-wider border-b border-gray-700">HH Number</th>
-                                        <th className="px-6 py-4 text-left text-gray-400 font-semibold uppercase tracking-wider border-b border-gray-700">Name</th>
-                                        <th className="px-6 py-4 text-left text-gray-400 font-semibold uppercase tracking-wider border-b border-gray-700">Date of Birth</th>
-                                        <th className="px-6 py-4 text-left text-gray-400 font-semibold uppercase tracking-wider border-b border-gray-700">Gender</th>
-                                        <th className="px-6 py-4 text-left text-gray-400 font-semibold uppercase tracking-wider border-b border-gray-700">Blood Group</th>
-                                        <th className="px-6 py-4 text-left text-gray-400 font-semibold uppercase tracking-wider border-b border-gray-700">Email</th>
+                                        <th className="px-6 py-4 text-left text-gray-600 font-semibold uppercase tracking-wider border-b border-gray-300">HH Number</th>
+                                        <th className="px-6 py-4 text-left text-gray-600 font-semibold uppercase tracking-wider border-b border-gray-300">Name</th>
+                                        <th className="px-6 py-4 text-left text-gray-600 font-semibold uppercase tracking-wider border-b border-gray-300">Date of Birth</th>
+                                        <th className="px-6 py-4 text-left text-gray-600 font-semibold uppercase tracking-wider border-b border-gray-300">Gender</th>
+                                        <th className="px-6 py-4 text-left text-gray-600 font-semibold uppercase tracking-wider border-b border-gray-300">Blood Group</th>
+                                        <th className="px-6 py-4 text-left text-gray-600 font-semibold uppercase tracking-wider border-b border-gray-300">Email</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-800">
+                                <tbody className="divide-y divide-gray-200">
                                     {patients.map((p, i) => (
-                                        <tr key={i} className="hover:bg-gray-800/50 transition-colors group">
-                                            <td className="px-6 py-4 text-gray-300 font-mono group-hover:text-white transition-colors">{p.hhNumber}</td>
-                                            <td className="px-6 py-4 text-gray-300 group-hover:text-white transition-colors">{p.name}</td>
-                                            <td className="px-6 py-4 text-gray-300 group-hover:text-white transition-colors">{p.dob}</td>
-                                            <td className="px-6 py-4 text-gray-300 group-hover:text-white transition-colors">{p.gender}</td>
-                                            <td className="px-6 py-4 text-gray-300 group-hover:text-white transition-colors">{p.bloodGroup}</td>
-                                            <td className="px-6 py-4 text-gray-300 group-hover:text-white transition-colors">{p.email}</td>
+                                        <tr key={i} className="hover:bg-gray-50 transition-colors">
+                                            <td className="px-6 py-4 text-gray-700 font-mono">{p.hhNumber}</td>
+                                            <td className="px-6 py-4 text-gray-700">{p.name}</td>
+                                            <td className="px-6 py-4 text-gray-700">{p.dob}</td>
+                                            <td className="px-6 py-4 text-gray-700">{p.gender}</td>
+                                            <td className="px-6 py-4 text-gray-700">{p.bloodGroup}</td>
+                                            <td className="px-6 py-4 text-gray-700">{p.email}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -166,27 +164,27 @@ const AdminDashboardPage = () => {
                 );
             case "doctors":
                 return (
-                    <div className="bg-gray-800/50 rounded-2xl p-6 backdrop-blur-lg border border-gray-700">
-                        <h2 className="text-xl font-semibold mb-6 text-purple-400">Doctors</h2>
-                        <div className="overflow-x-auto rounded-xl">
+                    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                        <h2 className="text-xl font-semibold mb-6 text-blue-600">Doctors</h2>
+                        <div className="overflow-x-auto rounded-lg">
                             <table className="w-full border-collapse">
-                                <thead className="bg-gray-800 sticky top-0">
+                                <thead className="bg-gray-100">
                                     <tr>
-                                        <th className="px-6 py-4 text-left text-gray-400 font-semibold uppercase tracking-wider border-b border-gray-700">HH Number</th>
-                                        <th className="px-6 py-4 text-left text-gray-400 font-semibold uppercase tracking-wider border-b border-gray-700">Name</th>
-                                        <th className="px-6 py-4 text-left text-gray-400 font-semibold uppercase tracking-wider border-b border-gray-700">Hospital</th>
-                                        <th className="px-6 py-4 text-left text-gray-400 font-semibold uppercase tracking-wider border-b border-gray-700">Specialization</th>
-                                        <th className="px-6 py-4 text-left text-gray-400 font-semibold uppercase tracking-wider border-b border-gray-700">Email</th>
+                                        <th className="px-6 py-4 text-left text-gray-600 font-semibold uppercase tracking-wider border-b border-gray-300">HH Number</th>
+                                        <th className="px-6 py-4 text-left text-gray-600 font-semibold uppercase tracking-wider border-b border-gray-300">Name</th>
+                                        <th className="px-6 py-4 text-left text-gray-600 font-semibold uppercase tracking-wider border-b border-gray-300">Hospital</th>
+                                        <th className="px-6 py-4 text-left text-gray-600 font-semibold uppercase tracking-wider border-b border-gray-300">Specialization</th>
+                                        <th className="px-6 py-4 text-left text-gray-600 font-semibold uppercase tracking-wider border-b border-gray-300">Email</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-800">
+                                <tbody className="divide-y divide-gray-200">
                                     {doctors.map((d, i) => (
-                                        <tr key={i} className="hover:bg-gray-800/50 transition-colors group">
-                                            <td className="px-6 py-4 text-gray-300 font-mono group-hover:text-white transition-colors">{d.hhNumber}</td>
-                                            <td className="px-6 py-4 text-gray-300 group-hover:text-white transition-colors">{d.name}</td>
-                                            <td className="px-6 py-4 text-gray-300 group-hover:text-white transition-colors">{d.hospital}</td>
-                                            <td className="px-6 py-4 text-gray-300 group-hover:text-white transition-colors">{d.specialization}</td>
-                                            <td className="px-6 py-4 text-gray-300 group-hover:text-white transition-colors">{d.email}</td>
+                                        <tr key={i} className="hover:bg-gray-50 transition-colors">
+                                            <td className="px-6 py-4 text-gray-700 font-mono">{d.hhNumber}</td>
+                                            <td className="px-6 py-4 text-gray-700">{d.name}</td>
+                                            <td className="px-6 py-4 text-gray-700">{d.hospital}</td>
+                                            <td className="px-6 py-4 text-gray-700">{d.specialization}</td>
+                                            <td className="px-6 py-4 text-gray-700">{d.email}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -196,38 +194,38 @@ const AdminDashboardPage = () => {
                 );
             case "Network Addresses":
                 return (
-                    <div className="bg-gray-800/50 rounded-2xl p-6 backdrop-blur-lg border border-gray-700">
-                        <h2 className="text-xl font-semibold mb-6 text-purple-400">Network Addresses</h2>
+                    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                        <h2 className="text-xl font-semibold mb-6 text-blue-600">Network Addresses</h2>
                         <div className="space-y-4">
-                            <div className="bg-gray-900/50 p-4 rounded-xl border border-gray-800">
-                                <h3 className="text-sm font-semibold text-purple-400 mb-2">Connected Account</h3>
-                                <p className="font-mono text-sm text-gray-400 break-all">{currentAccount}</p>
+                            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h3 className="text-sm font-semibold text-blue-600 mb-2">Connected Account</h3>
+                                <p className="font-mono text-sm text-gray-600 break-all">{currentAccount}</p>
                             </div>
-                            <div className="bg-gray-900/50 p-4 rounded-xl border border-gray-800">
-                                <h3 className="text-sm font-semibold text-purple-400 mb-2">Doctor Contract</h3>
-                                <p className="font-mono text-sm text-gray-400 break-all">{doctorContract?._address}</p>
+                            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h3 className="text-sm font-semibold text-blue-600 mb-2">Doctor Contract</h3>
+                                <p className="font-mono text-sm text-gray-600 break-all">{doctorContract?._address}</p>
                             </div>
-                            <div className="bg-gray-900/50 p-4 rounded-xl border border-gray-800">
-                                <h3 className="text-sm font-semibold text-purple-400 mb-2">Patient Contract</h3>
-                                <p className="font-mono text-sm text-gray-400 break-all">{patientContract?._address}</p>
+                            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h3 className="text-sm font-semibold text-blue-600 mb-2">Patient Contract</h3>
+                                <p className="font-mono text-sm text-gray-600 break-all">{patientContract?._address}</p>
                             </div>
                         </div>
                     </div>
                 );
             default:
                 return (
-                    <div className="bg-gray-800/50 rounded-2xl p-6 backdrop-blur-lg border border-gray-700">
-                        <h2 className="text-xl font-semibold mb-6 text-purple-400">Dashboard Overview</h2>
+                    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                        <h2 className="text-xl font-semibold mb-6 text-blue-600">Dashboard Overview</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="bg-gradient-to-br from-purple-600/30 to-blue-600/30 p-6 rounded-2xl border border-gray-800 hover:border-purple-400/20 transition-all">
-                                <h3 className="text-lg font-semibold text-gray-300">Total Doctors</h3>
-                                <p className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mt-2">
+                            <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
+                                <h3 className="text-lg font-semibold text-gray-700">Total Doctors</h3>
+                                <p className="text-4xl font-bold text-blue-600 mt-2">
                                     {doctors.length}
                                 </p>
                             </div>
-                            <div className="bg-gradient-to-br from-green-600/30 to-cyan-600/30 p-6 rounded-2xl border border-gray-800 hover:border-green-400/20 transition-all">
-                                <h3 className="text-lg font-semibold text-gray-300">Total Patients</h3>
-                                <p className="text-4xl font-bold bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent mt-2">
+                            <div className="bg-green-50 p-6 rounded-lg border border-green-200">
+                                <h3 className="text-lg font-semibold text-gray-700">Total Patients</h3>
+                                <p className="text-4xl font-bold text-green-600 mt-2">
                                     {patients.length}
                                 </p>
                             </div>
@@ -239,9 +237,9 @@ const AdminDashboardPage = () => {
 
     if (error) {
         return (
-            <div>
+            <div className="min-h-screen bg-gray-50">
                 <NavBarLogout />
-                <div className="text-red-400 text-center p-4 bg-red-900/30 rounded-lg mx-4 mt-4">
+                <div className="text-red-600 text-center p-4 bg-red-50 rounded-lg mx-4 mt-4">
                     {error}
                 </div>
             </div>
@@ -250,28 +248,28 @@ const AdminDashboardPage = () => {
 
     if (!isAdmin) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+            <div className="min-h-screen bg-gray-50">
                 <NavBarLogout />
-                <div className="text-center p-4 text-gray-300">Loading admin dashboard...</div>
+                <div className="text-center p-4 text-gray-600">Loading admin dashboard...</div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+        <div className="min-h-screen bg-gray-50 flex flex-col">
             <NavBarLogout />
-            <div className="flex">
+            <div className="flex flex-1">
                 {/* Sidebar */}
-                <div className="w-64 bg-gray-800/95 backdrop-blur-lg min-h-screen p-4 fixed left-0 top-16 border-r border-gray-700">
-                    <nav className="space-y-1">
+                <div className="w-64 bg-white shadow-md min-h-full p-4 border-r border-gray-200">
+                    <nav className="space-y-2">
                         {['dashboard', 'patients', 'doctors', 'Network Addresses'].map((section) => (
                             <button
                                 key={section}
                                 onClick={() => setActiveSection(section)}
-                                className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 ${
+                                className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 ${
                                     activeSection === section 
-                                        ? 'bg-purple-600/20 text-purple-400 shadow-lg border border-purple-400/20'
-                                        : 'text-gray-300 hover:bg-gray-700/50 hover:text-white'
+                                        ? 'bg-blue-100 text-blue-600 border border-blue-200'
+                                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
                                 }`}
                             >
                                 <span className="flex items-center gap-2">
@@ -284,14 +282,14 @@ const AdminDashboardPage = () => {
                 </div>
 
                 {/* Main Content */}
-                <div className="ml-64 p-8 flex-1 mt-16">
+                <div className="flex-1 p-8">
                     <div className="max-w-7xl mx-auto space-y-8">
                         <div className="flex items-center justify-between mb-8">
-                            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                            <h1 className="text-3xl font-bold text-gray-800">
                                 Admin Dashboard
                             </h1>
-                            <div className="text-gray-400 text-sm">
-                                Connected as: <span className="font-mono text-purple-300">{currentAccount.slice(0,6)}...{currentAccount.slice(-4)}</span>
+                            <div className="text-gray-500 text-sm">
+                                Connected as: <span className="font-mono text-blue-600">{currentAccount.slice(0,6)}...{currentAccount.slice(-4)}</span>
                             </div>
                         </div>
                         

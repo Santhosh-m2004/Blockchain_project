@@ -299,7 +299,7 @@ const PatientRegistry = () => {
               </button>
               <button
                 type="button"
-                onClick={cancelOperation}
+                onClick={() => navigate(-1)}
                 className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200"
               >
                 Close

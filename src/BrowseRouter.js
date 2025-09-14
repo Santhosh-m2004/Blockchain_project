@@ -15,7 +15,6 @@ import ViewPatientRecords from "./components/ViewPatientRecords";
 import ViewProfile from "./components/ViewProfile";
 import ViewDoctorProfile from "./components/ViewDoctorProfile";
 import AboutUs from "./components/AboutPage";
-import Services from "./components/Services";
 import GrantPermission from "./components/GrantPermission";
 import UploadRecords from "./components/UploadRecords";
 import PatientList from "./components/PatientList";
@@ -58,7 +57,6 @@ const BrowseRouter = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin" element={<AdminDashboardPage />} />
         <Route path="/AboutPage" element={<AboutUs />} />
-        <Route path="/Services" element={<Services />} />
         
         {/* Registration Routes */}
         <Route path="/patient_registration" element={<PatientRegistry />} />
