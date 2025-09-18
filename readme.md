@@ -40,7 +40,7 @@ By integrating blockchain with decentralized storage, this approach ensures **da
 ![Upload Records](./photos/Patient/uploadRecords.png) 
 ![View Records](./photos/Patient/ViewRecords.png)  
 ![View Appointments](./photos/Patient/ViewAppointments.png)  
-![View Prescription](./photos/Patient/ViewPrescription.png)  
+![ConsultationHistory](./photos/Patient/viewPrescription.png)  
 
 ---
 
