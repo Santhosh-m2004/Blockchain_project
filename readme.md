@@ -27,32 +27,32 @@ By integrating blockchain with decentralized storage, this approach ensures **da
 ### 🔹 Home Page  
 ![Home](./photos/home.png)  
 ![About](./photos/about.png)  
+![Patient Registration](./photos/Patient/patientRegistration.png)  
+![Doctor Registration](./photos/Doctor/doctorRegistration.png)  
 ![Login](./photos/login.png)  
 
 ---
 
 ### 🔹 Patient Side  
 ![Patient Dashboard](./photos/Patient/patientDashBoard.png)  
-![Patient Registration](./photos/Patient/patientRegistration.png)  
 ![Profile](./photos/Patient/Profile.png)  
 ![Grant Permission](./photos/Patient/grantPermission.png)  
-![Upload Records](./photos/Patient/uploadRecords.png)  
+![Upload Records](./photos/Patient/uploadRecords.png) 
+![View Records](./photos/Patient/ViewRecords.png)  
 ![View Appointments](./photos/Patient/ViewAppointments.png)  
 ![View Prescription](./photos/Patient/ViewPrescription.png)  
-![View Records](./photos/Patient/ViewRecords.png)  
 
 ---
 
 ### 🔹 Doctor Side  
 ![Doctor Dashboard](./photos/Doctor/doctorDashBoard.png)  
-![Doctor Registration](./photos/Doctor/doctorRegistration.png)  
-![Appointments](./photos/Doctor/Appointments.png)  
-![Consultancy](./photos/Doctor/consultancy.png)  
-![Past Consultations](./photos/Doctor/pastConsultations.png)  
+![Profile](./photos/Doctor/profile.png)  
 ![Patient List](./photos/Doctor/patientList.png)  
 ![Patient Profile](./photos/Doctor/patientProfile.png)  
 ![Patient Records](./photos/Doctor/patientRecords.png)  
-![Profile](./photos/Doctor/profile.png)  
+![Appointments](./photos/Doctor/Appointments.png)  
+![Consultancy](./photos/Doctor/consultancy.png)  
+![Past Consultations](./photos/Doctor/pastConsultations.png)  
 ![Notifications](./photos/Doctor/notifications.png)  
 
 ---
