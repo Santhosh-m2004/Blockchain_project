@@ -65,14 +65,74 @@ By integrating blockchain with decentralized storage, this approach ensures **da
 
 ## ⚡ Requirements & Setup
 
-1. Install Node.js  
-2. Install Ganache  
-3. Download IPFS (Kubo)  
-4. Add Metamask Extension in Browser  
-5. Open CMD/Terminal in the project directory and run `npm install`  
-6. Install Truffle globally using `npm install -g truffle`  
-7. Start Ganache → Create New Workspace → Add Project → Select `truffle-config.js` → Save Workspace  
-8. Compile & migrate contracts with `truffle compile` and `truffle migrate`  
-9. Run the project with `npm start`  
+### 🔧 Requirements
 
-✅ Now your project will be running successfully!
+- **Node.js**  
+  Required to run the React frontend and install project dependencies.
+
+- **Ganache**  
+  Provides a local Ethereum blockchain for deploying and testing smart contracts.
+
+- **IPFS (Kubo)**  
+  Used to store and retrieve files in a decentralized way.
+
+- **MetaMask**  
+  Browser wallet used to connect the application to Ethereum.
+
+- **Truffle**  
+  Framework for compiling, deploying, and managing smart contracts.
+
+---
+
+### 🚀 Setup (Step-by-Step)
+
+1. **Install Node.js**  
+   Download and install Node.js (v16 or above).  
+   Verify installation:
+   node -v
+   npm -v
+
+2. **Install Ganache**  
+   Open Ganache and create a new workspace.
+
+3. **Download IPFS (Kubo)**  
+   Install IPFS and initialize it using:
+   ipfs init  
+   ipfs daemon
+
+4. **Add MetaMask Extension**  
+   Install MetaMask in your browser and create a wallet.
+
+5. **Open Project Folder**  
+   Open CMD / Terminal inside the project directory.
+
+6. **Install Project Dependencies**
+   npm install
+
+7. **Install Truffle Globally**
+   npm install -g truffle
+
+8. **Configure Ganache with Truffle**
+   - Open Ganache  
+   - Create New Workspace  
+   - Add Project  
+   - Select `truffle-config.js`  
+   - Save Workspace
+
+9. **Compile Smart Contracts**
+   truffle compile
+
+10. **Deploy Smart Contracts**
+    truffle migrate
+
+11. **Connect MetaMask to Ganache**
+    - Add a custom network  
+    - RPC URL: http://127.0.0.1:7545  
+    - Chain ID: 1337  
+    - Import an account using Ganache private key
+
+12. **Start the Application**
+    npm start
+
+✅ The application will now run successfully on localhost.
+
